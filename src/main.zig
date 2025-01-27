@@ -7,36 +7,44 @@ const SCREEN_WIDTH = 800;
 const SCREEN_HEIGHT = 450;
 
 const Ball = struct {
-    position: rl.Vector2,
+    position: [3]rl.Vector2,
     size: f32,
     speed: rl.Vector2,
 
     pub fn init(x: f32, y: f32, size: f32, speed: f32) Ball {
         return Ball{
-            .position = rl.Vector2.init(x, y),
+            .position = [3]rl.Vector2{
+                rl.Vector2.init(x, y),
+                rl.Vector2.init(x, y),
+                rl.Vector2.init(x, y),
+            },
             .size = size,
             .speed = rl.Vector2.init(speed, speed),
         };
     }
 
     pub fn update(self: *Ball) void {
-        self.position.x += self.speed.x;
-        self.position.y += self.speed.y;
+        self.position[2] = self.position[1];
+        self.position[1] = self.position[0];
+
+        self.position[0].x += self.speed.x;
+        self.position[0].y += self.speed.y;
 
         // check for y collisions
-        if (self.position.y <= self.size or self.position.y + self.size >= SCREEN_HEIGHT) {
+        if (self.position[0].y <= self.size or self.position[0].y + self.size >= SCREEN_HEIGHT) {
             self.speed.y *= -1;
         }
 
         // check for x collisions
-        if (self.position.x <= self.size or self.position.x + self.size >= SCREEN_WIDTH) {
+        if (self.position[0].x <= self.size or self.position[0].x + self.size >= SCREEN_WIDTH) {
             self.speed.x *= -1;
         }
     }
 
     pub fn draw(self: *Ball) void {
-        // rl.drawRectangleV(self.position, self.size, rl.Color.red);
-        rl.drawCircleV(self.position, self.size, rl.Color.red);
+        rl.drawCircleV(self.position[0], self.size, rl.Color.red);
+        rl.drawCircleV(self.position[1], self.size, rl.Color.red.alpha(0.7));
+        rl.drawCircleV(self.position[2], self.size, rl.Color.red.alpha(0.3));
     }
 };
 
@@ -46,7 +54,7 @@ pub fn main() anyerror!void {
 
     rl.setTargetFPS(60); // Set our game to run at 60 frames-per-second
 
-    var ball = Ball.init(20, 20, 20, 3);
+    var ball = Ball.init(20, 20, 15, 5);
 
     //--------------------------------------------------------------------------------------
     // Main game loop
