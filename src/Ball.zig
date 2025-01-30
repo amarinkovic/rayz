@@ -15,9 +15,6 @@ pub const Ball = struct {
         var fifo = try FixedFifo(rl.Vector2).init(allocator, length);
         fifo.push(rl.Vector2.init(x, y));
 
-        if (fifo.head()) |head| {
-            std.debug.print("      INIT HEAD >>>>>>>>> x = {}, y = {}\n", .{ head.x, head.y });
-        }
         return Ball{
             .positions = fifo,
             .size = size,
@@ -30,25 +27,23 @@ pub const Ball = struct {
     }
 
     pub fn update(self: *Ball) void {
-        if (self.position.head() == null) {
-            std.debug.print(" -- NO HEAD!!!", .{});
-        }
-
         const head = self.positions.head() orelse return;
 
         const new_head = rl.Vector2.init(head.x + self.speed.x, head.y + self.speed.y);
         self.positions.push(new_head);
 
         // check for y collisions
-        if (head.y <= self.size or head.y + self.size >= SCREEN_HEIGHT) {
-            self.speed.y *= -1;
-            std.debug.print(" -- flip Y\n", .{});
+        if (head.y <= self.size) {
+            self.speed.y = @abs(self.speed.y);
+        } else if (head.y + self.size >= SCREEN_HEIGHT) {
+            self.speed.y = @abs(self.speed.y) * -1;
         }
 
         // check for x collisions
-        if (head.x <= self.size or head.x + self.size >= SCREEN_WIDTH) {
-            self.speed.x *= -1;
-            std.debug.print(" -- flip X\n", .{});
+        if (head.x <= self.size) {
+            self.speed.x = @abs(self.speed.x);
+        } else if (head.x + self.size >= SCREEN_WIDTH) {
+            self.speed.x = @abs(self.speed.x) * -1;
         }
     }
 
