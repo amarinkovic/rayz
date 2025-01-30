@@ -9,9 +9,9 @@ pub fn FixedFifo(comptime T: type) type {
 
         const Self = @This();
 
-        pub fn init(allocator: *const std.mem.Allocator, capacity: usize) !Self {
+        pub fn init(allocator: *const std.mem.Allocator, length: usize) !Self {
             return Self{
-                .items = try allocator.alloc(T, capacity),
+                .items = try allocator.alloc(T, length),
             };
         }
 
@@ -34,7 +34,9 @@ pub fn FixedFifo(comptime T: type) type {
                 return null;
             }
 
-            return self.items[self.end % self.items.len];
+            const head_pos = if (self.end == 0) (self.items.len - 1) else (self.end % self.items.len - 1);
+
+            return self.items[head_pos];
         }
 
         pub fn is_empty(self: *Self) bool {
