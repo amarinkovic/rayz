@@ -1,6 +1,7 @@
 const std = @import("std");
 const rl = @import("raylib");
 // const rlm = @import("raylib-math"); // FIX: fix math module
+// const math = @import("raymath.zig");
 const Ball = @import("./Ball.zig").Ball;
 
 const SCREEN_WIDTH = 800;
@@ -12,7 +13,7 @@ pub fn main() anyerror!void {
 
     const allocator = &arena.allocator();
 
-    var ball = try Ball.init(40, 40, 15, 5, allocator, 5);
+    var ball = try Ball.init(20, 20, 15, 5, allocator, 5);
     defer ball.deinit(allocator);
 
     rl.initWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "rayz");
