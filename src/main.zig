@@ -13,7 +13,7 @@ pub fn main() anyerror!void {
 
     const allocator = &arena.allocator();
 
-    var ball = try Ball.init(20, 20, 15, 5, allocator, 5);
+    var ball = try Ball.init(20, 20, 15, 10, allocator, 100);
     defer ball.deinit(allocator);
 
     rl.initWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "rayz");

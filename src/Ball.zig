@@ -48,8 +48,14 @@ pub const Ball = struct {
     }
 
     pub fn draw(self: *Ball) void {
-        if (self.positions.head()) |head| {
-            rl.drawCircleV(head, self.size, rl.Color.red);
+        for (0..self.positions.size) |i| {
+            const circle = self.positions.get(i);
+
+            const size_f32: f32 = @floatFromInt(self.positions.size);
+            const i_f32: f32 = @floatFromInt(i);
+            const alpha = i_f32 / size_f32;
+
+            rl.drawCircleV(circle, self.size * alpha * alpha, rl.Color.red.alpha(alpha));
         }
     }
 };
