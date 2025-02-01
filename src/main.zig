@@ -16,7 +16,7 @@ pub fn main() anyerror!void {
     rl.initWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "rayz");
     defer rl.closeWindow(); // Close window and OpenGL context
 
-    rl.setTargetFPS(60); // Set our game to run at 60 frames-per-second
+    // rl.setTargetFPS(60); // PERF: don't fix the framerate!
 
     const camera: rl.Camera3D = rl.Camera3D{
         .position = rl.Vector3.init(0, 5.0, 5.0),
@@ -26,13 +26,23 @@ pub fn main() anyerror!void {
         .projection = rl.CameraProjection.perspective,
     };
 
+    const mesh_cilinder = rl.genMeshCylinder(1, 2, 26);
+    const model_cilinder = try rl.loadModelFromMesh(mesh_cilinder);
+
+    const image = rl.genImageCellular(200, 300, 10);
+    const texture = try rl.loadTextureFromImage(image);
+
+    rl.setMaterialTexture(model_cilinder.materials, rl.MaterialMapIndex.albedo, texture);
+
+    var position = rl.Vector3.zero();
     //--------------------------------------------------------------------------------------
     // Main game loop
     //--------------------------------------------------------------------------------------
     while (!rl.windowShouldClose()) { // Detect window close button or ESC key
         // Update
         //----------------------------------------------------------------------------------
-        // const dt = rl.getFrameTime();
+        const dt = rl.getFrameTime();
+        position.x += 2 * dt;
 
         //----------------------------------------------------------------------------------
 
@@ -46,7 +56,8 @@ pub fn main() anyerror!void {
         rl.beginMode3D(camera);
         defer rl.endMode3D();
 
-        rl.drawGrid(10, 1);
+        rl.drawGrid(10, 0.5);
+        rl.drawModel(model_cilinder, position, 1, rl.Color.red);
 
         rl.drawText("All you codebase are belong to us!", 190, 200, 20, rl.Color.green);
         //----------------------------------------------------------------------------------
