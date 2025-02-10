@@ -5,8 +5,6 @@ const SCREEN_WIDTH = 1200;
 const SCREEN_HEIGHT = 800;
 
 pub fn main() anyerror!void {
-    const allocator = std.heap.page_allocator;
-
     rl.initWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "rayz");
     defer rl.closeWindow(); // Close window and OpenGL context
 
@@ -58,8 +56,7 @@ pub fn main() anyerror!void {
 
         rl.endMode3D();
 
-        const fps_label = try std.fmt.allocPrintZ(allocator, "Raylib: {d} fps", .{rl.getFPS()});
-        rl.drawText(fps_label, 10, 20, 20, rl.Color.green);
+        rl.drawText(rl.textFormat("Raylib: %d fps", .{rl.getFPS()}), 10, 20, 20, rl.Color.green);
 
         //----------------------------------------------------------------------------------
     }
