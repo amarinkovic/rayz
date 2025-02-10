@@ -17,7 +17,7 @@ pub fn main() anyerror!void {
         .fovy = 45.0,
         .projection = rl.CameraProjection.perspective,
     };
-    rl.hideCursor();
+    rl.disableCursor();
 
     const floorImg = rl.genImageChecked(150, 150, 4, 4, rl.Color.blue, rl.Color.dark_blue);
     const floorTexture = try rl.loadTextureFromImage(floorImg);
@@ -40,7 +40,6 @@ pub fn main() anyerror!void {
         //-----[ UPDATE ]-------------------------------------------------------------------
         // const dt = rl.getFrameTime();
         rl.updateCamera(&camera, rl.CameraMode.free);
-        rl.setMousePosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         //----------------------------------------------------------------------------------
 
         //-----[ DRAW ]---------------------------------------------------------------------
