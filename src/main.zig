@@ -18,10 +18,11 @@ pub fn main() anyerror!void {
         .projection = rl.CameraProjection.perspective,
     };
     // rl.setMousePosition(600, 800);
+    rl.hideCursor();
 
     const floorImg = rl.genImageChecked(40, 40, 4, 4, rl.Color.blue, rl.Color.dark_blue);
     const floorTexture = try rl.loadTextureFromImage(floorImg);
-    const floor = try rl.loadModelFromMesh(rl.genMeshPlane(32, 32, 1, 1));
+    const floor = try rl.loadModelFromMesh(rl.genMeshPlane(50, 50, 1, 1));
     rl.setMaterialTexture(floor.materials, rl.MaterialMapIndex.albedo, floorTexture);
 
     const zero = rl.Vector3.zero();
@@ -40,7 +41,8 @@ pub fn main() anyerror!void {
         //-----[ UPDATE ]-------------------------------------------------------------------
         // const dt = rl.getFrameTime();
         // position.x += 2 * dt;
-        rl.updateCamera(&camera, rl.CameraMode.orbital);
+        rl.updateCamera(&camera, rl.CameraMode.free);
+        rl.setMousePosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         //----------------------------------------------------------------------------------
 
         //-----[ DRAW ]---------------------------------------------------------------------
