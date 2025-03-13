@@ -6,6 +6,9 @@ const SCREEN_HEIGHT = 800;
 
 pub fn main() anyerror!void {
     // window
+    rl.setConfigFlags(rl.ConfigFlags{ .window_undecorated = true });
+    rl.setConfigFlags(rl.ConfigFlags{ .msaa_4x_hint = true });
+
     rl.initWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "rayz");
     defer rl.closeWindow(); // Close window and OpenGL context
 
@@ -25,8 +28,8 @@ pub fn main() anyerror!void {
     const floor = try rl.loadModelFromMesh(rl.genMeshPlane(150, 150, 1, 1));
     rl.setMaterialTexture(floor.materials, rl.MaterialMapIndex.albedo, floorTexture);
 
-    defer rl.unloadTexture(floorTexture);
     defer rl.unloadModel(floor);
+    defer rl.unloadTexture(floorTexture);
 
     // blender model
     const spiral = try rl.loadModel("model/spiral_cubes.glb");
@@ -38,6 +41,7 @@ pub fn main() anyerror!void {
     defer rl.unloadModel(spiral);
 
     // shader
+    // TODO: check this https://github.com/Not-Nik/raylib-zig/blob/devel/examples/shaders/raymarching.zig
     const shader = try rl.loadShader(null, "resources/shaders/bloom.glsl");
     const shaderTexture = try rl.loadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
     defer rl.unloadShader(shader);
@@ -58,10 +62,9 @@ pub fn main() anyerror!void {
 
         //-----[ DRAW ]---------------------------------------------------------------------
         rl.beginTextureMode(shaderTexture);
-        rl.clearBackground(rl.Color.black);
-
         rl.beginMode3D(camera);
 
+        rl.clearBackground(rl.Color.black);
         rl.drawModel(floor, zero3, 1, rl.Color.dark_brown);
 
         rl.endMode3D();
