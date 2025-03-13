@@ -32,7 +32,7 @@ pub fn main() anyerror!void {
     defer rl.unloadTexture(floorTexture);
 
     // blender model
-    const spiral = try rl.loadModel("model/spiral_cubes.glb");
+    const spiral = try rl.loadModel("resources/models/spiral_cubes.glb");
     const modelImage = rl.genImageCellular(200, 300, 30);
     const modelTexture = try rl.loadTextureFromImage(modelImage);
     rl.setMaterialTexture(spiral.materials, rl.MaterialMapIndex.albedo, modelTexture);
