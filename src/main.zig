@@ -31,24 +31,27 @@ pub fn main() anyerror!void {
     defer rl.unloadModel(floor);
     defer rl.unloadTexture(floorTexture);
 
-    // blender model
-    const spiral = try rl.loadModel("resources/models/spiral_cubes.glb");
-    const modelImage = rl.genImageCellular(200, 300, 30);
-    const modelTexture = try rl.loadTextureFromImage(modelImage);
-    rl.setMaterialTexture(spiral.materials, rl.MaterialMapIndex.albedo, modelTexture);
+    const lightShader = try rl.loadShader("resources/shaders/glsl330/lighting.vs", "resources/shaders/glsl330/lighting.fs");
+    defer rl.unloadShader(lightShader);
 
-    defer rl.unloadTexture(modelTexture);
-    defer rl.unloadModel(spiral);
+    // main blender model
+    const model = try rl.loadModel("resources/models/head.glb");
+    // const modelImage = rl.genImageCellular(200, 300, 30);
+    // const modelTexture = try rl.loadTextureFromImage(modelImage);
+    // rl.setMaterialTexture(model.materials, rl.MaterialMapIndex.albedo, modelTexture);
 
-    // shader
-    // TODO: check this https://github.com/Not-Nik/raylib-zig/blob/devel/examples/shaders/raymarching.zig
-    const shader = try rl.loadShader(null, "resources/shaders/bloom.glsl");
-    const shaderTexture = try rl.loadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
-    defer rl.unloadShader(shader);
-    defer rl.unloadRenderTexture(shaderTexture);
+    // defer rl.unloadTexture(modelTexture);
+    defer rl.unloadModel(model);
+
+    const bloomShader = try rl.loadShader(null, "resources/shaders/bloom.glsl");
+    defer rl.unloadShader(bloomShader);
+
+    const renderTexture = try rl.loadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+    defer rl.unloadRenderTexture(renderTexture);
 
     const zero2 = rl.Vector2.zero();
     const zero3 = rl.Vector3.zero();
+
     const renderArea = rl.Rectangle{ .height = SCREEN_HEIGHT * -1, .width = SCREEN_WIDTH, .x = 0, .y = 0 };
 
     //---------[ MAIN LOOP ]----------------------------------------------------------------
@@ -61,7 +64,7 @@ pub fn main() anyerror!void {
         //----------------------------------------------------------------------------------
 
         //-----[ DRAW ]---------------------------------------------------------------------
-        rl.beginTextureMode(shaderTexture);
+        rl.beginTextureMode(renderTexture);
         rl.beginMode3D(camera);
 
         rl.clearBackground(rl.Color.black);
@@ -75,13 +78,13 @@ pub fn main() anyerror!void {
 
         rl.clearBackground(rl.Color.black);
 
-        rl.beginShaderMode(shader);
-        rl.drawTextureRec(shaderTexture.texture, renderArea, zero2, rl.Color.white);
+        rl.beginShaderMode(bloomShader);
+        rl.drawTextureRec(renderTexture.texture, renderArea, zero2, rl.Color.white);
         rl.endShaderMode();
 
-        // normal 3D
+        // render main model
         rl.beginMode3D(camera);
-        rl.drawModel(spiral, zero3, 1, rl.Color.green);
+        rl.drawModel(model, zero3, 1, rl.Color.green);
         rl.endMode3D();
 
         // 2d overlay
